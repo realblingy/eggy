@@ -52,9 +52,10 @@ def itemDict(item):
 
 @app.route('/', methods=["GET", "POST"])
 @app.route('/index')
+@login_required
 def index():
     if request.method =="GET":
-        return render_template('home.html')
+        return render_template('home.html', name = current_user.username)
     else:
         name = list(request.form.get("name"))
         # match counter to check if words match
@@ -136,6 +137,12 @@ def login():
         return '<h1>' + form.username.data + ' ' + form.password.data + '</h1>'
 
     return render_template('login.html', form=form)
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(debug=True)
