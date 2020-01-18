@@ -13,8 +13,13 @@ Bootstrap(app)
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[InputRequired(), Length(min=4, max=15)])
+    password = PasswordField('Password', validators=[InputRequired(), Length(min=8, max=80)])
+    remember = BooleanField('Remember me')
+
+class RegisterForm(FlaskForm):
+    email = StringField('email', validators=[InputRequired(), Email(message="Invalid Email"), Length(max=100)])
+    username = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
     password = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
-    remember = BooleanField('remember me')
 
 def itemDict(item):
     dict = {
@@ -84,7 +89,9 @@ def about():
 
 @app.route('/signup')
 def signup():
-    return render_template('signup.html')
+    form = RegisterForm()
+
+    return render_template('signup.html', form=form)
 
 @app.route('/login')
 def login():
