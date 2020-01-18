@@ -11,8 +11,6 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'THISISASOCIETY'
 Bootstrap(app)
 
-# Added a comment
-
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[InputRequired(), Length(min=4, max=15)])
     password = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
