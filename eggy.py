@@ -42,6 +42,7 @@ def itemDict(item):
     return dict
 
 @app.route('/', methods=["GET", "POST"])
+@app.route('/index')
 def index():
     if request.method =="GET":
         return render_template('home.html')
@@ -113,6 +114,12 @@ def signup():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
+    user = User.query.filter_by(username=form.username.data).first()
+    if user:
+        if user.password == form.password.data:
+            return redirect(url_for('index'))
+
+        return '<h1>Invalid username of password</h1>'
 
     if form.validate_on_submit():
         return '<h1>' + form.username.data + ' ' + form.password.data + '</h1>'
