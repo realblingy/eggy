@@ -144,6 +144,10 @@ def wishlist():
     global current_match
     user = User.query.get(current_user.get_id())
     if request.method == 'POST':
+        item_name = request.form.get("delete")
+        user_id = current_user.get_id()
+        # if item_name not None:
+        db.engine.execute(f"DELETE FROM item WHERE user_id={user_id} AND name={item_name};")
         items = user.wishlist
         return render_template('about.html', items=items, quantity=len(items))
     else:

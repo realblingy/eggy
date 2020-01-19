@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 {% extends "layout.html" %}
 {% block main %}
-<form class="" action="/wishlist" method="post">
 <div class="about col-8 mx-auto">
   <h1 class="mb-4">Wishlist</h1>
   <table class="table table-hover">
@@ -17,17 +16,17 @@
     <tbody>
       {% if quantity > 0 %}
         {% for item in items %}
+        <form class="" action="/wishlist" method="post">
         <tr>
           <th scope="row"></th>
           <td>{{ item.name }}</td>
-          <!-- <td>{{ item['price'] }}</td> -->
           <td><a href="{{ item.link }}">{{ item.store }}</a></td>
-          <td><button type="submit" class="btn btn-outline-danger">Delete</input></td>
+          <td><button type="submit" class="btn btn-outline-danger" name="delete" value="{{ item.name }}">Delete</input></td>
         </tr>
+        </form>
         {% endfor %}
       {% endif %}
     </tbody>
   </table>
 </div>
-</form>
 {% endblock %}
