@@ -138,7 +138,6 @@ def about():
         items = user.wishlist
         return render_template('about.html', items=items, quantity=len(items))
     else:
-        items = user.wishlist
         return render_template('about.html', items=items, quantity=len(items))
 
 @app.route('/wishlist', methods=['POST', 'GET'])
@@ -167,8 +166,9 @@ def signup():
         db.session.add(new_user)
         db.session.commit()
 
-        message = "You have been registered!"
-        return render_template('login.html')
+        form = LoginForm()
+        message = "You have successfully signed up!"
+        return render_template('login.html', form=form, message=message)
 
     return render_template('signup.html', form=form)
 
@@ -181,7 +181,9 @@ def login():
             login_user(user, remember=form.remember.data)
             return redirect(url_for('index'))
 
-        return '<h1>Invalid username of password</h1>'
+        form = LoginForm()
+        message = "Incorrect password or username!"
+        return render_template('login.html', form=form, message=message)
 
     if form.validate_on_submit():
         return '<h1>' + form.username.data + ' ' + form.password.data + '</h1>'
