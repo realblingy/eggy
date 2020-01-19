@@ -128,12 +128,11 @@ def about():
     user = User.query.get(current_user.get_id())
     if request.method == 'POST':
         new_item = current_match
-        print(new_item)
         item = Item(name=new_item['name'], store=new_item['shop_name'], link=new_item['link'], user_id=current_user.get_id())
         user_id = current_user.get_id()
         item_name = new_item['name']
-        checkItem = db.engine.execute(f'SELECT FROM item WHERE user_id=:user_id AND name=:item_name', user_id=user_id, item_name=item_name)
-        if checkItem is None:
+        checkItem = db.engine.execute(f'SELECT * FROM item WHERE user_id=:user_id AND name=:item_name;', user_id=user_id, item_name=item_name)
+        if len(checkItem.fetchall()) == 0:
             db.session.add(item)
             db.session.commit()
         items = user.wishlist

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 {% extends "layout.html" %}
 {% block main %}
-<div id="alertmessage">
+<!-- <div id="alertmessage">
 
-</div>
+</div> -->
 <form action="/about" method="post">
   <div class="container mx-auto col-6" style="text-align:center">
     <h1 name="item_name">{{ item['name'] }}</h1>
@@ -22,11 +22,11 @@
   <p>Not the item you're looking for?</p>
   <a href="/">Try searching again</a>
 </div>
-<script>
+<!-- <script>
   let msg ='<div class="alert alert-success alert-dismissable fade show"><button type="button" class="close" data-dismiss="alert">&times;</button><strong>Success! </strong>Item added to your wishlist!</div>';
   let alertmessage = document.getElementById('alertmessage');
   let button = document.getElementById('Add');
   button.addEventListener("click", function(){ alertmessage.innerHTML = msg; });
-</script>
+</script> -->
 
 {% endblock %}
