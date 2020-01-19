@@ -130,8 +130,12 @@ def about():
         new_item = current_match
         print(new_item)
         item = Item(name=new_item['name'], store=new_item['shop_name'], link=new_item['link'], user_id=current_user.get_id())
-        db.session.add(item)
-        db.session.commit()
+        user_id = current_user.get_id()
+        item_name = new_item['name']
+        checkItem = db.engine.execute(f'SELECT FROM item WHERE user_id=:user_id AND name=:item_name', user_id=user_id, item_name=item_name)
+        if checkItem is None:
+            db.session.add(item)
+            db.session.commit()
         items = user.wishlist
         return render_template('about.html', items=items, quantity=len(items))
     else:
@@ -145,9 +149,10 @@ def wishlist():
     user = User.query.get(current_user.get_id())
     if request.method == 'POST':
         item_name = request.form.get("delete")
+        print(item_name)
         user_id = current_user.get_id()
         # if item_name not None:
-        db.engine.execute(f"DELETE FROM item WHERE user_id={user_id} AND name={item_name};")
+        db.engine.execute(f'DELETE FROM item WHERE user_id=:user_id AND name=:item_name;', user_id=user_id, item_name=item_name)
         items = user.wishlist
         return render_template('about.html', items=items, quantity=len(items))
     else:
