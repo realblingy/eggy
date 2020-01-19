@@ -9,6 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from datetime import datetime
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'THISISASOCIETY'
@@ -20,11 +21,21 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
+current_match = None
+
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(15), unique=True)
     email = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(80))
+    wishlist = db.relationship('Item', backref='buyer', lazy=True)
+
+class Item(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200), nullable=False)
+    store = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -49,6 +60,8 @@ def itemDict(item):
         "link": item.find('div', class_='offer').find('a', class_='price')['href']
     }
     return dict
+
+current_match =  None
 
 @app.route('/', methods=["GET", "POST"])
 @app.route('/index')
@@ -99,15 +112,29 @@ def index():
                     if (i.lower() == j.lower()):
                         matches += 1
             if matches == name_length:
-                print('Found a match: ' + item['name'])
+                global current_match
+                current_match = item
+                print(current_match)
                 return render_template('lowest.html', item=item)
         return render_template('notfound.html')
 
-@app.route('/about/')
+@app.route('/about', methods=['GET', 'POST'])
 @login_required
 def about():
-    items = [dict(name = 'Nintendo Switch', price = 499.99, store = 'JB HI FI')]
-    return render_template('about.html', items=items, quantity=len(items))
+    items = []
+    global current_match
+    user = User.query.get(1)
+    if request.method == 'POST':
+        new_item = current_match
+        print(new_item)
+        item = Item(name=new_item['name'], store=new_item['shop_name'], user_id=1)
+        db.session.add(item)
+        db.session.commit()
+        items = user.wishlist
+        return render_template('about.html', items=items, quantity=len(items))
+    else:
+        items = user.wishlist
+        return render_template('about.html', items=items, quantity=len(items))
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
