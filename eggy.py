@@ -35,6 +35,7 @@ class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable=False)
     store = db.Column(db.Text, nullable=False)
+    link = db.Column(db.Text, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
 
@@ -128,9 +129,21 @@ def about():
     if request.method == 'POST':
         new_item = current_match
         print(new_item)
-        item = Item(name=new_item['name'], store=new_item['shop_name'], user_id=current_user.get_id())
+        item = Item(name=new_item['name'], store=new_item['shop_name'], link=new_item['link'], user_id=current_user.get_id())
         db.session.add(item)
         db.session.commit()
+        items = user.wishlist
+        return render_template('about.html', items=items, quantity=len(items))
+    else:
+        items = user.wishlist
+        return render_template('about.html', items=items, quantity=len(items))
+
+@app.route('/wishlist', methods=['POST', 'GET'])
+@login_required
+def wishlist():
+    global current_match
+    user = User.query.get(current_user.get_id())
+    if request.method == 'POST':
         items = user.wishlist
         return render_template('about.html', items=items, quantity=len(items))
     else:
