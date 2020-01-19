@@ -10,6 +10,7 @@ import os
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from datetime import datetime
+from flask import g
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'THISISASOCIETY'
@@ -123,11 +124,11 @@ def index():
 def about():
     items = []
     global current_match
-    user = User.query.get(1)
+    user = User.query.get(current_user.get_id())
     if request.method == 'POST':
         new_item = current_match
         print(new_item)
-        item = Item(name=new_item['name'], store=new_item['shop_name'], user_id=1)
+        item = Item(name=new_item['name'], store=new_item['shop_name'], user_id=current_user.get_id())
         db.session.add(item)
         db.session.commit()
         items = user.wishlist
